@@ -1,5 +1,11 @@
 package org.example.markovski.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.example.markovski.exceptions.AuthenticationException;
 import org.example.markovski.exceptions.AuthorizationException;
@@ -15,6 +21,7 @@ import org.example.markovski.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,6 +42,18 @@ public class UserController {
     }
 
     @GetMapping
+    @Operation(
+            tags = {"User API"},
+            summary = "Get users with filters",
+            description = "Retrieves a list of users based on specified filter options.",
+            parameters = {@Parameter(name = "Authorization", example = "Authorization"),
+                    @Parameter(name = "email", example = "kaloyan.enchev@abv.bg")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema =
+                    @Schema(implementation = User.class ),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE))},
+            security = {@SecurityRequirement(name = "basic")}
+    )
     public List<User> get(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String encodedString,
                           @RequestParam(required = false) String firstName,
                           @RequestParam(required = false) String lastName,
@@ -54,6 +73,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Operation(
+            tags = {"User API"},
+            summary = "Get user by ID",
+            description = "Retrieves a user based on the provided ID.",
+            parameters = {@Parameter(name = "Authorization", description = "Write 'Authorization' in the input field.",example = "Authorization"),
+                    @Parameter(name = "id", description = "ID of the user to retrieve",example = "1")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema =
+                    @Schema(implementation = User.class ),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE))},
+            security = {@SecurityRequirement(name = "basic")}
+    )
     public User get(@PathVariable int id,
                     @RequestHeader(value = HttpHeaders.AUTHORIZATION) String encodedString) {
         try {
@@ -65,6 +96,19 @@ public class UserController {
     }
 
     @GetMapping("/email")
+    @Operation(
+            tags = {"User API"},
+            summary = "Get user by email",
+            description = "Retrieves a user based on the provided email.",
+            parameters = {@Parameter(name = "Authorization", example = "Authorization"),
+                    @Parameter(name = "email", description = "Email of the user to retrieve",
+                            example = "kaloyan.enchev@abv.bg")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema =
+                    @Schema(implementation = User.class ),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE))},
+            security = {@SecurityRequirement(name = "basic")}
+    )
     public User getByEmail(@RequestParam String email,
                            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String encodedString) {
         try {
@@ -80,6 +124,15 @@ public class UserController {
     }
 
     @PostMapping
+    @Operation(
+            tags = {"User API"},
+            summary = "Create a new user",
+            description = "Creates a new user.",
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema =
+                    @Schema(implementation = User.class ),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE))}
+    )
     public User create(@Valid @RequestBody UserDto userDto) {
         try {
             User userToCreate = userMapper.fromDto(userDto);
@@ -93,6 +146,17 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @Operation(
+            tags = {"User API"},
+            summary = "Update user information",
+            description = "Updates user information based on the provided ID.",
+            parameters = {@Parameter(name = "Authorization", example = "Authorization")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema =
+                    @Schema(implementation = User.class ),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE))},
+            security = {@SecurityRequirement(name = "basic")}
+    )
     public User update(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String encodedString,
                        @PathVariable int id,
                        @Valid @RequestBody UserDtoUpdating userDto) {
@@ -111,6 +175,17 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(
+            tags = {"User API"},
+            summary = "Delete user",
+            description = "Delete user based on the provided ID.",
+            parameters = {@Parameter(name = "Authorization", example = "Authorization")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema =
+                    @Schema(implementation = User.class ),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE))},
+            security = {@SecurityRequirement(name = "basic")}
+    )
     public void delete(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String encodedString,
                        @PathVariable int id) {
         try {
