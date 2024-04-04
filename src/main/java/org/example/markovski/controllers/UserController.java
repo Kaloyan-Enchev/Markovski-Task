@@ -10,6 +10,7 @@ import org.example.markovski.helpers.filters.FilterOptionsUsers;
 import org.example.markovski.helpers.mappers.UserMapper;
 import org.example.markovski.models.User;
 import org.example.markovski.models.dtos.UserDto;
+import org.example.markovski.models.dtos.UserDtoUpdating;
 import org.example.markovski.services.contracts.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -94,10 +95,10 @@ public class UserController {
     @PutMapping("/{id}")
     public User update(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String encodedString,
                        @PathVariable int id,
-                       @Valid @RequestBody UserDto userDto) {
+                       @Valid @RequestBody UserDtoUpdating userDto) {
         try {
             User user = authenticationHelper.tryGetUser(encodedString);
-            User userToUpdate = userMapper.fromDto(id, userDto);
+            User userToUpdate = userMapper.fromDtoUpdating(id, userDto);
             userService.update(userToUpdate, user);
             return userToUpdate;
         } catch (EntityNotFoundException e) {
